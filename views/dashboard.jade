@@ -1,0 +1,52 @@
+extends layout
+
+block content
+    form(action="/", method="post") 
+    h2.mb-4 Dashboard
+
+    .row
+
+        .col-md-4.mb-3
+            .card.text-bg-primary
+                .card-body.text-center
+                    h5.card-title Total Employees
+                    h2= totalEmployees
+
+        .col-md-4.mb-3
+            .card.text-bg-success
+                .card-body.text-center
+                    h5.card-title Total Assets
+                    h2= totalAssets
+
+        .col-md-4.mb-3
+            .card.text-bg-warning
+                .card-body.text-center
+                    h5.card-title Assets In Stock
+                    h2= stockAssets
+
+    .row
+
+        .col-md-4.mb-3
+            .card.text-bg-info
+                .card-body.text-center
+                    h5.card-title Issued Assets
+                    h2= issuedAssets
+
+        .col-md-4.mb-3
+            .card.text-bg-secondary
+                .card-body.text-center
+                    h5.card-title Under Repair
+                    h2= repairAssets
+
+        .col-md-4.mb-3
+            .card.text-bg-danger
+                .card-body.text-center
+                    h5.card-title Scrapped Assets
+                    h2= scrapAssets
+                    .col-md-4.mb-3
+    .row
+    .col-md-4.mx-auto
+        .card.text-bg-dark
+            .card-body.text-center
+                h5.card-title Total Issues
+                h2= totalIssues

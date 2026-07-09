@@ -1,0 +1,162 @@
+extends ../layout
+
+block content
+
+    .d-flex.justify-content-between.align-items-center.mb-4
+
+        h2 Asset List
+
+        a.btn.btn-primary(
+            type="button" 
+            data-bs-toggle='modal'
+            data-bs-target='#assetModal'
+        )
+            |Add Asset
+
+    .table-responsive
+        table.datatable.table.table-striped.table-bordered.w-200
+
+            thead.table-dark
+                tr
+                    th Asset ID 
+                    th Asset Name
+                    th Serial Number
+                    th Make
+                    th Model
+                    th Purchase Date
+                    th Purchase Price
+                    th Status
+                    th Category Id
+                    th Warranty
+                    th Action
+            tbody
+                each asset in assets 
+                    tr
+                        td= asset.asset_id 
+                        td= asset.asset_name 
+                        td= asset.serial_number 
+                        td= asset.make 
+                        td= asset.model
+                        td= asset.purchase_date 
+                        td= asset.purchase_price
+                        td= asset.status 
+                        td= asset.category_id
+                        td= asset.warranty
+                        
+
+                        td
+                            button.btn.btn-warning.btn-sm(
+                                type="button"
+                                onclick=`editAsset(${asset.asset_id})`
+                            ) Edit
+                            
+                            a.btn.btn-danger.btn-sm.ms-2(
+                                href="/asset/delete/" + asset.asset_id
+                                onclick="return confirm('Are you sure you want to delete this asset?')"
+                            ) Delete
+                // Asset Modal
+                #assetModal.modal.fade(tabindex="-1")
+                    .modal-dialog.modal-lg
+                        .modal-content
+
+                            .modal-header
+                                h5.modal-title#modalTitle Add Asset
+                                button.btn-close(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                )
+
+                            form#assetForm(
+                                action="/asset/add"
+                                method="POST"
+                            )
+
+                                .modal-body
+
+                                    input(
+                                        type="hidden"
+                                        name="asset_id"
+                                        id="asset_id"
+                                    )
+
+                                    .row
+
+                                        .col-md-6.mb-3
+                                            label Asset Name
+                                            input.form-control(
+                                                type="text"
+                                                name="asset_name"
+                                                id="asset_name"
+                                                required
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Serial Number
+                                            input.form-control(
+                                                type="text"
+                                                name="serial_number"
+                                                id="serial_number"
+                                                required
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Make
+                                            input.form-control(
+                                                type="text"
+                                                name="make"
+                                                id="make"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Model
+                                            input.form-control(
+                                                type="text"
+                                                name="model"
+                                                id="model"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Purchase Date
+                                            input.form-control(
+                                                type="date"
+                                                name="purchase_date"
+                                                id="purchase_date"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Purchase Price
+                                            input.form-control(
+                                                type="number"
+                                                name="purchase_price"
+                                                id="purchase_price"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Warranty
+                                            select.form-select(
+                                                name="warranty"
+                                                id="warranty"
+                                            )
+                                                option(value="YES") YES
+                                                option(value="NO") NO
+
+                                        .col-md-6.mb-3
+                                            label Category
+
+                                            select.form-select(
+                                                name="category_id"
+                                                id="category_id"
+                                            )
+                                                each category in categories
+                                                    option(value=category.category_id)= category.category_name
+
+                                .modal-footer
+
+                                    button.btn.btn-secondary(
+                                        type="button"
+                                        data-bs-dismiss="modal"
+                                    ) Cancel
+
+                                    button.btn.btn-success(
+                                        type="submit"
+                                    ) Save  

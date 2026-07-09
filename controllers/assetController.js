@@ -1,0 +1,127 @@
+const { Asset, Category } = require("../models");
+// Display all employees
+exports.listAssets= async (req, res) => {
+    try {
+        const assets = await Asset.findAll();
+        const categories = await Category.findAll();
+        res.render("asset/list", {
+            assets,
+            categories
+        });
+        // console.log(assets)
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error fetching Assets");
+    }
+};
+exports.getAsset = async (req, res) => {
+
+    try {
+
+        const asset = await Asset.findByPk(req.params.id);
+
+        res.json(asset);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            success: false
+        });
+
+    }
+
+};
+
+// Show Add Employee page
+exports.showAddForm = async (req, res) => {
+    try {
+        const categories = await Category.findAll();
+        res.render("asset/add", {
+            categories
+        });
+    } catch (err) {
+        console.log(err);
+    }
+
+};
+
+exports.addAsset = async (req, res) => {
+    try {
+        await Asset.create({
+            asset_name: req.body.asset_name,
+            serial_number: req.body.serial_number,
+            make: req.body.make,
+            model: req.body.model,
+            purchase_date: req.body.purchase_date,
+            purchase_price: req.body.purchase_price,
+            category_id: req.body.category_id,
+            status: "IN_STOCK"
+        });
+        res.redirect("/asset/list");
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+exports.deleteAsset = async (req, res) => {
+    try {
+        await Asset.destroy({
+            where: {
+                asset_id: req.params.id
+            }
+        });
+        res.redirect("/asset/list");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Error deleting Asset");
+    }
+};
+
+exports.editAsset = async (req, res) => {
+    try {
+
+        const asset = await Asset.findByPk(req.params.id);
+
+        const categories = await Category.findAll();
+
+        res.render("asset/edit", {
+            asset,
+            categories
+        });
+
+    } catch (err) {
+        console.log(err);
+    }
+};
+exports.updateAsset = async (req, res) => {
+
+    try {
+
+        await Asset.update(
+            {
+                asset_name: req.body.asset_name,
+                serial_number: req.body.serial_number,
+                make: req.body.make,
+                model: req.body.model,
+                purchase_date: req.body.purchase_date,
+                purchase_price: req.body.purchase_price,
+                category_id: req.body.category_id,
+                status: req.body.status,
+                warranty: req.body.warranty
+            },
+            {
+                where: {
+                    asset_id: req.params.id
+                }
+            }
+        );
+
+        res.redirect("/asset/list");
+
+    } catch (err) {
+        console.log(err);
+    }
+
+};

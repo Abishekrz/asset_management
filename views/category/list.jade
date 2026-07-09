@@ -1,0 +1,84 @@
+extends ../layout
+
+block content
+
+    .d-flex.justify-content-between.align-items-center.mb-4
+
+        h2 Category List
+
+        a.btn.btn-primary(
+            type='button'
+            data-bs-toggle='modal'
+            data-bs-target='#categoryModal'
+        )
+            | Add Category
+
+    table.datatable.table.table-striped.table-bordered
+
+        thead.table-dark
+            tr
+                th Category ID
+                th Category Name
+                th Action
+        tbody 
+            each category in categories 
+                tr 
+                    td=category.category_id
+                    td=category.category_name
+
+                    td
+                        a.btn.btn-warning.btn-sm(
+                            type='button'
+                            onclick=`editCategory(${category.category_id})`
+                        ) Edit
+
+                        a.btn.btn-danger.btn-sm.ms-2(
+                            href="/category/delete/" + category.category_id
+                            onclick="return confirm('Are you sure you want to delete this category?')"
+                        ) Delete
+            // Category Modal
+            #categoryModal.modal.fade(tabindex='-1')
+                .modal-dialog.modal-lg 
+                    .modal-content
+
+                        .modal-header   
+                            h5.modal.title#modalTitle Add Category 
+                                button.btn-close(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                    data-bs-target='categoryModal'
+
+                                )
+                        form#categoryForm(
+                            action='/category/add'
+                            method="POST"
+                        )
+                            .modal-body 
+                                input(
+                                    type="hidden"
+                                    name="category_id"
+                                    id="category_id"
+                                )
+
+                                .row 
+                                    .col-md-6.mb-3 
+                                        label Category Name
+                                        input.form-control(
+                                            type="text"
+                                            name="category_name"
+                                            id="category_id"
+                                            required
+                                        )
+                            .modal-footer
+
+                                button.btn.btn-secondary(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                ) Cancel
+
+                                button.btn.btn-success(
+                                    type="submit"
+                                ) Save 
+
+                                    
+

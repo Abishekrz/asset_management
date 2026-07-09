@@ -1,0 +1,127 @@
+extends ../layout
+
+block content
+
+    .d-flex.justify-content-between.align-items-center.mb-4
+        h2 Employee List
+
+        a.btn.btn-primary(
+            type="button"
+            data-bs-toggle='modal'
+            data-bs-target='#employeeModal'
+        )
+            |Add Employee
+
+    table.datatable.table.table-striped.table-bordered
+
+        thead.table-dark
+            tr
+                th Employee ID
+                th Employee Name
+                th Email
+                th Department
+                th Branch
+                th Status
+                th Action
+
+        tbody
+            each employee in employees
+                tr
+                    td= employee.employee_id
+                    td= employee.employee_name
+                    td= employee.email
+                    td= employee.department
+                    td= employee.branch
+                    td= employee.status
+
+                    td
+                        a.btn.btn-warning.btn-sm(
+                            type="button"
+                            onclick=`editEmployee(${employee.employee_id})`
+                        ) Edit
+
+                        
+                        a.btn.btn-danger.btn-sm.ms-2(
+                            href="/employee/changestatus/" + employee.employee_id
+                            onclick="return confirm('Are you sure you want to delete this employee?')"
+                        ) Change Status
+
+        #employeeModal.modal.fade(tabindex="-1")
+                .modal-dialog.modal-lg
+                    .modal-content
+
+                        .modal-header
+                            h5.modal-title#modalTitle Add Employee
+                            button.btn-close(
+                                type="button"
+                                data-bs-dismiss="modal"
+                                data-bs-target='#employeeModal'
+
+                            )
+
+                        form#assetForm(
+                            action="/employee/add"
+                            method="POST"
+                        )
+
+                            .modal-body
+
+                                input(
+                                    type="hidden"
+                                    name="employee_id"
+                                    id="employee_id"
+                                )
+
+                                .row
+
+                                    .col-md-6.mb-3
+                                        label Employee Name
+                                        input.form-control(
+                                            type="text"
+                                            name="employee_name"
+                                            id="employee_name"
+                                            required
+                                        )
+                                    .col-md-6.mb-3
+                                        label(for="email") Email
+                                        input.form-control(
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            placeholder="Enter email"
+                                            required
+                                        )
+                                    .col-md-6.mb-3
+                                        label Department
+                                        input.form-control(
+                                            type="text"
+                                            name="department"
+                                            id="department"
+                                            required
+                                        )
+                                    .col-md-6.mb-3
+                                        label Branch
+                                        input.form-control(
+                                            type="text"
+                                            name="branch"
+                                            id="branch"
+                                            required
+                                        )                                           
+                                    .col-md-6.mb-3
+                                        label Joining Date
+                                        input.form-control(
+                                            type="date"
+                                            name="joined_at"
+                                            id="joined_at"
+                                            required
+                                        )
+                            .modal-footer
+
+                                button.btn.btn-secondary(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                ) Cancel
+
+                                button.btn.btn-success(
+                                    type="submit"
+                                ) Save  

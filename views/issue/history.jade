@@ -1,0 +1,187 @@
+extends ../layout
+
+block content
+
+    .d-flex.justify-content-between.align-items-center.mb-4
+
+    h2 Issue History
+
+    .d-flex.gap-2
+
+        button.btn.btn-primary(
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#issueModal"
+        )
+            | Issue Asset
+
+        button.btn.btn-success(
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#returnModal"
+        )
+            | Return Asset
+    table.datatable.table.table-striped.table-bordered
+
+                thead.table-dark.br
+
+                    tr
+                        th Issue ID
+                        th Employee ID
+                        th Asset ID
+                        th Issue Date
+                        th Return Date
+                        th Reason
+                        th Status
+                        th Action
+
+                tbody
+                    each issue in issues
+                        tr
+                            td= issue.issue_id
+                            td= issue.Employee.employee_name
+                            td= issue.Asset.asset_name
+                            td= issue.issue_date
+                            td= issue.return_date
+                            td= issue.reason
+                            td= issue.Asset.status
+                            
+                            td
+                                a.btn.btn-warning.btn-sm(
+                                    type="button"
+                                    onclick=`editIssue(${issue.issue_id})`
+                                ) Edit
+
+                                a.btn.btn-danger.btn-sm.ms-2(
+                                    href="/issue/delete/" + issue.issue_id
+                                    onclick="return confirm('Are you sure you want to delete this issue?')"
+                                ) Delete
+                // Issue Modal
+                #issueModal.modal.fade(tabindex="-1")
+                    .modal-dialog.modal-lg
+                        .modal-content
+
+                            .modal-header
+                                h5.modal-title#modalTitle Issue Asset
+                                button.btn-close(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                )
+
+                            form#assetForm(
+                                action="/issue/issue"
+                                method="POST"
+                            )
+
+                                .modal-body
+
+                                    input(
+                                        type="hidden"
+                                        name="issue_id"
+                                        id="issue_id"
+                                    )
+
+                                    .row
+
+                                        .col-md-6.mb-3
+                                            label Asset Id
+
+                                            select.form-select(
+                                                name="asset_id"
+                                                id="asset_id"
+                                            )
+                                                each asset in assets
+                                                    option(value=asset.asset_id)= asset.asset_name
+                                        .col-md-6.mb-3
+                                            label Employee Id
+
+                                            select.form-select(
+                                                name="employee_id"
+                                                id="employee_id"
+                                            )
+                                                each employee in employees
+                                                    option(value=employee.employee_id)= employee.employee_name
+                                        .col-md-6.mb-3
+                                            label Issue Date
+                                            input.form-control(
+                                                type="date"
+                                                name="issue_date"
+                                                id="issue_date"
+                                            )
+
+                                .modal-footer
+
+                                    button.btn.btn-secondary(
+                                        type="button"
+                                        data-bs-dismiss="modal"
+                                    ) Cancel
+
+                                    button.btn.btn-success(
+                                        type="submit"
+                                    ) Issue Asset 
+                // Return Modal
+                #returnModal.modal.fade(tabindex="-1")
+                    .modal-dialog
+                        .modal-content
+
+                            .modal-header
+                                h5.modal-title Return Asset
+
+                                button.btn-close(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                )
+
+                            form(
+                                action="/issue/return"
+                                method="POST"
+                            )
+
+                                .modal-body
+
+                                    .mb-3
+                                        label Asset
+
+                                        select.form-select(
+                                            name="asset_id"
+                                            required
+                                        )
+                                            each asset in assets
+                                                if asset.status == "ISSUED"
+                                                    option(value=asset.asset_id)= asset.asset_name
+
+                                    .mb-3
+                                        label Return Date
+
+                                        input.form-control(
+                                            type="date"
+                                            name="return_date"
+                                            required
+                                        )
+
+                                    .mb-3
+                                        label Return Reason
+
+                                        select.form-select(
+                                            name="reason"
+                                            required
+                                        )
+                                            option(value="IN_STOCK") Need Upgrade 
+                                            option(value="IN_STOCK") Reliving 
+                                            option(value="REPAIR") Needs Repair
+                                            option(value="SCRAPPED") Scrapped
+
+                                .modal-footer
+
+                                    button.btn.btn-secondary(
+                                        type="button"
+                                        data-bs-dismiss="modal"
+                                    )
+                                        |   Cancel
+
+                                    button.btn.btn-success(
+                                        type="submit"
+                                    )
+                                        |   Return Asset
+                                            
+                    
