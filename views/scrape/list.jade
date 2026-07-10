@@ -1,0 +1,107 @@
+extends ../layout
+
+//- block scripts
+//-     script(src="/js/scrape.js")
+block content
+
+    .d-flex.justify-content-between.align-items-center.mb-4
+
+        h2 Scraped Assets
+
+        a.btn.btn-primary(
+            type='button'
+            data-bs-toggle='modal'
+            data-bs-target="#scrapeModal"
+        )
+            | Add Scrape Details
+
+    table.datatable.table.table-striped.table-bordered
+
+        thead.table-dark
+            tr
+                th Scrape ID
+                th Asset Name
+                th Scrape Date
+                th Reason
+                th Action
+        tbody 
+            each scrape in scrapes 
+                tr 
+                    td=scrape.scrape_id
+                    td=scrape.Asset.asset_name 
+                    td=scrape.scrape_date
+                    td=scrape.reason
+
+                    td
+                        a.btn.btn-warning.btn-sm(
+                            type='button'
+                            onclick=`editScrape(${scrape.scrape_id})`
+                        ) Edit
+
+                        a.btn.btn-danger.btn-sm.ms-2(
+                            href="/scrape/delete/" + scrape.scrape_id
+                            onclick="return confirm('Are you sure you want to delete this scrape information ?')"
+                        ) Delete
+    // Scrape Modal
+    #scrapeModal.modal.fade(tabindex='-1')
+        .modal-dialog.modal-lg 
+            .modal-content
+
+                .modal-header   
+                    h5.modal.title#modalTitle Scrape Details
+                        button.btn-close(
+                            type="button"
+                            data-bs-dismiss="modal"
+                            data-bs-target='scrapeModal'
+
+                        )
+                form#scrapeForm(
+                    action='/scrape/add'
+                    method="POST"
+                )
+                    .modal-body
+                        input(
+                            type="hidden"
+                            name="scrape_id"
+                            id="scrape_id"
+                        )
+                        .row
+                            .col-md-6.mb-3
+                                label Asset
+                                select.form-select(
+                                    name="asset_id"
+                                    id="asset_id"
+                                    required
+                                )
+                                    each asset in assets
+                                        if asset.status != "SCRAPPED"
+                                            option(value=asset.asset_id)= asset.asset_name
+                            .col-md-6.mb-3
+                                label Scrap Date
+                                input.form-control(
+                                    type="date"
+                                    name="scrape_date"
+                                    id="scrape_date"
+                                    required
+                                )
+                            .col-md-12.mb-3
+                                label Reason
+                                textarea.form-control(
+                                    name="reason"
+                                    id="reason"
+                                    rows="3"
+                                    required
+                                )
+                    .modal-footer
+
+                        button.btn.btn-secondary(
+                            type="button"
+                            data-bs-dismiss="modal"
+                        ) Cancel
+
+                        button.btn.btn-success(
+                            type="submit"
+                        ) Save 
+
+                            
+

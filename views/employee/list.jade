@@ -1,9 +1,14 @@
 extends ../layout
 
+block scripts
+    script(src="/js/employee.js")
+
 block content
 
     .d-flex.justify-content-between.align-items-center.mb-4
         h2 Employee List
+
+        
 
         a.btn.btn-primary(
             type="button"
@@ -11,6 +16,18 @@ block content
             data-bs-target='#employeeModal'
         )
             |Add Employee
+    .row.mb-3
+        .col-md-2
+            select.form-select#employeeStatusFilter
+                option(value="") All Employee Status
+
+        .col-md-2
+            select.form-select#departmentFilter
+                option(value="") All Departement 
+        .col-md-2
+            select.form-select#branchFilter
+                option(value="") All Branch
+
 
     table.datatable.table.table-striped.table-bordered
 

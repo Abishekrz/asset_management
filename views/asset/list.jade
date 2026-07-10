@@ -1,5 +1,8 @@
 extends ../layout
 
+//- block scripts
+//-     script(src="/js/asset.js")
+    
 block content
 
     .d-flex.justify-content-between.align-items-center.mb-4
@@ -12,6 +15,26 @@ block content
             data-bs-target='#assetModal'
         )
             |Add Asset
+    //-     Status Filter
+    .row.mb-3
+        .col-md-2
+            select.form-select#assetStatusFilter
+                option(value="") All Status
+
+        .col-md-2
+            select.form-select#makeFilter
+                option(value="") All Make
+        .col-md-2
+            select.form-select#modelFilter
+                option(value="") All Model
+
+        .col-md-2
+            select.form-select#categoryFilter
+                option(value="") All Category
+
+        .col-md-2
+            select.form-select#warrantyFilter
+                option(value="") All Warranty
 
     .table-responsive
         table.datatable.table.table-striped.table-bordered.w-200
@@ -159,4 +182,5 @@ block content
 
                                     button.btn.btn-success(
                                         type="submit"
-                                    ) Save  
+                                    ) Save 
+                

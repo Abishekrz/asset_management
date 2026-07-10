@@ -1,4 +1,4 @@
-const { Issue, Employee, Asset } = require("../models");
+const { Issue, Employee, Asset, Scrape} = require("../models");
 
     
 exports.listIssue = async (req, res) => {
@@ -49,19 +49,27 @@ exports.showIssueForm = async (req, res) => {
 
 exports.getIssue = async (req, res) => {
     try {
-        const issue = await Issue.findByPk(req.params.id);
+        const issue = await Issue.findByPk(req.params.id, {
+            include: [Asset]
+        });
         if (!issue) {
             return res.status(404).json({
                 success: false,
                 message: "Issue not found"
             });
         }
-        res.json(issue);
+        res.json({
+            issue_id: issue.issue_id,
+            employee_id: issue.employee_id,
+            asset_id: issue.asset_id,
+            issue_date: issue.issue_date,
+            return_date: issue.return_date,
+            reason: issue.reason,
+        });
     } catch (err) {
         console.log(err);
         res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
+            success: false
         });
     }
 };
@@ -111,7 +119,7 @@ exports.showReturnForm = async (req, res) => {
     }
 };
 
-exports.returnAsset = async (req, res) => {
+ exports.returnAsset = async (req, res) => {
     try {
         const issue = await Issue.findOne({
             where: {
@@ -120,15 +128,17 @@ exports.returnAsset = async (req, res) => {
             }
         });
         if (!issue) {
-            return res.status(404).send("No active issue found for this asset.");
+            return res.status(404).send("No active issue found.");
         }
+        // Update issue details
         await issue.update({
             return_date: req.body.return_date,
             reason: req.body.reason
         });
+        // Update asset status
         await Asset.update(
             {
-                status: "IN_STOCK"
+                status: req.body.status
             },
             {
                 where: {
@@ -136,6 +146,21 @@ exports.returnAsset = async (req, res) => {
                 }
             }
         );
+        // Create scrap record if asset is scrapped
+        if (req.body.status === "SCRAPPED") {
+            const existingScrape = await Scrape.findOne({
+                where: {
+                    asset_id: req.body.asset_id
+                }
+            });
+            if (!existingScrape) {
+                await Scrape.create({
+                    asset_id: req.body.asset_id,
+                    scrape_date: req.body.return_date,
+                    reason: req.body.reason
+                });
+            }
+        }
         res.redirect("/issue/history");
     } catch (err) {
         console.log(err);
@@ -181,7 +206,6 @@ exports.editIssue = async (req, res) => {
     }
 };
 exports.updateIssue = async (req, res) => {
-
     try {
         const data = {
             employee_id: req.body.employee_id,
@@ -197,9 +221,18 @@ exports.updateIssue = async (req, res) => {
                 issue_id: req.params.id
             }
         });
+        let status = "IN_STOCK";
+        switch (req.body.reason) {
+            case "Needs Repair":
+                status = "REPAIR";
+                break;
+            case "Scrapped":
+                status = "SCRAPPED";
+                break;
+        }
         await Asset.update(
             {
-                status: req.body.status
+                status: status
             },
             {
                 where: {
@@ -207,8 +240,28 @@ exports.updateIssue = async (req, res) => {
                 }
             }
         );
+        // Create scrap record only if asset is scrapped
+        console.log("Status =", req.body.status);
+        if (status === "SCRAPPED") {
+            console.log("Creating Scrap Record...");
+            const existingScrape = await Scrape.findOne({
+                where: {
+                    asset_id: req.body.asset_id
+                }
+            });
+            console.log(existingScrape)
+            if (!existingScrape) {
+                await Scrape.create({
+                    asset_id: req.body.asset_id,
+                    scrape_date: req.body.return_date,
+                    reason: req.body.reason
+                });
+                console.log("Scrap Record Created");
+            }
+        }
         res.redirect("/issue/history");
     } catch (err) {
         console.log(err);
+        res.status(500).send("Error updating issue");
     }
 };

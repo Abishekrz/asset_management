@@ -1,5 +1,6 @@
 extends ../layout
-
+//- block script 
+//-     script(src="./js/issue.js"); 
 block content
 
     .d-flex.justify-content-between.align-items-center.mb-4
@@ -21,18 +22,18 @@ block content
             data-bs-target="#returnModal"
         )
             | Return Asset
+   
     table.datatable.table.table-striped.table-bordered
 
                 thead.table-dark.br
 
                     tr
                         th Issue ID
-                        th Employee ID
-                        th Asset ID
+                        th Employee Name
+                        th Asset Name
                         th Issue Date
                         th Return Date
                         th Reason
-                        th Status
                         th Action
 
                 tbody
@@ -44,8 +45,7 @@ block content
                             td= issue.issue_date
                             td= issue.return_date
                             td= issue.reason
-                            td= issue.Asset.status
-                            
+
                             td
                                 a.btn.btn-warning.btn-sm(
                                     type="button"
@@ -84,16 +84,17 @@ block content
                                     .row
 
                                         .col-md-6.mb-3
-                                            label Asset Id
+                                            label Asset Name
 
                                             select.form-select(
                                                 name="asset_id"
                                                 id="asset_id"
                                             )
                                                 each asset in assets
-                                                    option(value=asset.asset_id)= asset.asset_name
+                                                    if asset.status == "IN_STOCK"
+                                                        option(value=asset.asset_id)= asset.asset_name
                                         .col-md-6.mb-3
-                                            label Employee Id
+                                            label Employee Name
 
                                             select.form-select(
                                                 name="employee_id"
@@ -162,14 +163,21 @@ block content
                                     .mb-3
                                         label Return Reason
 
-                                        select.form-select(
-                                            name="reason"
-                                            required
+                                        input.form-control(
+                                            type='text'
+                                            name='reason'
                                         )
-                                            option(value="IN_STOCK") Need Upgrade 
-                                            option(value="IN_STOCK") Reliving 
-                                            option(value="REPAIR") Needs Repair
-                                            option(value="SCRAPPED") Scrapped
+
+                                    .col-md-6.mb-3
+                                            label Asset Status
+
+                                            select.form-select(
+                                                name="status"
+                                                id="status"
+                                            )
+                                                option(value="IN_STOCK") IN_STOCK
+                                                option(value="REPAIR") REPAIR
+                                                option(value="SCRAPPED") SCRAPPED
 
                                 .modal-footer
 
@@ -183,5 +191,88 @@ block content
                                         type="submit"
                                     )
                                         |   Return Asset
+                // Edit Issue Modal
+                #editIssueModal.modal.fade(tabindex="-1")
+                    .modal-dialog.modal-lg
+                        .modal-content
+
+                            .modal-header
+                                h5.modal-title#editModalTitle Edit Issue
+
+                                button.btn-close(
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                )
+
+                            form#editIssueForm(
+                                method="POST"
+                            )
+
+                                .modal-body
+
+                                    input(
+                                        type="hidden"
+                                        name="issue_id"
+                                        id="edit_issue_id"
+                                    )
+
+                                    .row
+
+                                        .col-md-6.mb-3
+                                            label Employee
+
+                                            select.form-select(
+                                                name="employee_id"
+                                                id="edit_employee_id"
+                                            )
+                                                each employee in employees
+                                                    option(value=employee.employee_id)= employee.employee_name
+
+                                        .col-md-6.mb-3
+                                            label Asset
+
+                                            select.form-select(
+                                                name="asset_id"
+                                                id="edit_asset_id"
+                                            )
+                                                each asset in assets
+                                                    option(value=asset.asset_id)= asset.asset_name
+
+                                        .col-md-6.mb-3
+                                            label Issue Date
+
+                                            input.form-control(
+                                                type="date"
+                                                name="issue_date"
+                                                id="edit_issue_date"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Return Date
+
+                                            input.form-control(
+                                                type="date"
+                                                name="return_date"
+                                                id="edit_return_date"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Return Reason
+
+                                            input.form-control(
+                                                name="reason"
+                                                id="edit_reason"
+                                            )
+
+                                .modal-footer
+
+                                    button.btn.btn-secondary(
+                                        type="button"
+                                        data-bs-dismiss="modal"
+                                    ) Cancel
+
+                                    button.btn.btn-success(
+                                        type="submit"
+                                    ) Update
                                             
                     

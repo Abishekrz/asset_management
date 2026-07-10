@@ -48,3 +48,35 @@ function editAsset(id) {
         }
 
     });
+    $(document).ready(function () {
+    // Run only on Asset List page
+    if ($("#assetStatusFilter").length === 0) {
+        return;
+    }
+    const table = $(".datatable").DataTable();
+    function createFilter(selectId, columnIndex) {
+        // Don't try to filter a column that doesn't exist
+        if (columnIndex >= table.columns().count()) {
+            console.error(`Column ${columnIndex} does not exist.`);
+            return;
+        }
+        table.column(columnIndex).data().unique().sort().each(function (value) {
+            if (value !== null && value !== "") {
+                $(selectId).append(
+                    `<option value="${value}">${value}</option>`
+                );
+            }
+        });
+        $(selectId).on("change", function () {
+            table
+                .column(columnIndex)
+                .search($(this).val())
+                .draw();
+        });
+    }
+    createFilter("#makeFilter", 3);
+    createFilter("#modelFilter", 4);
+    createFilter("#assetStatusFilter", 7);
+    createFilter("#categoryFilter", 8);
+    createFilter("#warrantyFilter", 9);
+});

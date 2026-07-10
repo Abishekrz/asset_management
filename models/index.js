@@ -2,6 +2,7 @@ const Employee = require("./Employee");
 const Category = require("./Category");
 const Asset = require("./Asset");
 const Issue = require("./Issue");
+const Scrape = require("./Scrape");
 Category.hasMany(Asset, {
     foreignKey: "category_id"
 });
@@ -20,9 +21,16 @@ Asset.hasMany(Issue, {
 Issue.belongsTo(Asset, {
     foreignKey: "asset_id"
 });
+Scrape.belongsTo(Asset, {
+    foreignKey: "asset_id"
+});
+Asset.hasMany(Scrape, {
+    foreignKey: "asset_id"
+});
 module.exports = {
     Employee,
     Category,
     Asset,
-    Issue
+    Issue,
+    Scrape
 };

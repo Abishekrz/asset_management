@@ -20,6 +20,7 @@ app.use("/employee", require("./routes/employee"));
 app.use("/asset", require("./routes/asset"));
 app.use("/category", require("./routes/category"));
 app.use("/issue", require("./routes/issue"));
+app.use("/scrape", require("./routes/scrape"));
 // Start Server
 const PORT = 3000;
 app.listen(PORT, () => {
