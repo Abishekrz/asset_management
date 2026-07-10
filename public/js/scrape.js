@@ -1,14 +1,15 @@
 function editScrape(id) {
     $.get("/scrape/" + id, function (scrape) {
-        $("#modalTitle").text("Edit Scrap");
-        $("#scrape_id").val(scrape.scrape_id);
-        $("#asset_id").val(scrape.asset_id);
-        $("#scrape_date").val(scrape.scrape_date);
-        $("#reason").val(scrape.reason);
-        $("#scrapeForm")
+        // console.log(scrape);
+        $("#modalTitle").text("Edit Scrap Details");
+        $("#edit_scrape_id").val(scrape.scrape_id);
+        $("#edit_asset_id").val(scrape.asset_id);
+        $("#edit_scrape_date").val(scrape.scrape_date);
+        $("#edit_reason").val(scrape.reason);
+        $("#editScrapeForm")
             .attr("action", "/scrape/edit/" + scrape.scrape_id);
         const modal = new bootstrap.Modal(
-            document.getElementById("scrapeModal")
+            document.getElementById("editScrapeModal")
         );
         modal.show();
     });

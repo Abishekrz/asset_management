@@ -17,7 +17,14 @@ exports.listScrape = async (req, res) => {
 };  
 exports.getScrape = async (req, res) => {
     try {
-        const scrape = await Scrape.findByPk(req.params.id);
+        const scrape = await Scrape.findByPk(req.params.id
+            // ,
+            // {
+            //     include: [{
+            //     model: Asset
+            // }]
+            // }
+        );
         if (!scrape) {
             return res.status(404).json({
                 success: false,
@@ -25,6 +32,7 @@ exports.getScrape = async (req, res) => {
             });
         }
         res.json(scrape);
+        console.log(scrape)
     } catch (err) {
         console.log(err);
         res.status(500).json({
