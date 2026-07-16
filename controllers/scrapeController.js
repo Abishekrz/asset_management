@@ -32,7 +32,7 @@ exports.getScrape = async (req, res) => {
             });
         }
         res.json(scrape);
-        console.log(scrape)
+        // console.log(scrape)
     } catch (err) {
         console.log(err);
         res.status(500).json({
