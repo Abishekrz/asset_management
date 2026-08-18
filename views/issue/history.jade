@@ -62,13 +62,13 @@ block content
                         .modal-content
 
                             .modal-header
-                                h5.modal-title#modalTitle Issue Asset
+                                h5#issueModalTitle.modal-title Issue Asset
                                 button.btn-close(
                                     type="button"
                                     data-bs-dismiss="modal"
                                 )
 
-                            form#assetForm(
+                            form#issueForm(
                                 action="/issue/issue"
                                 method="POST"
                             )
@@ -110,6 +110,33 @@ block content
                                                 id="issue_date"
                                             )
 
+                                        .col-md-6.mb-3
+                                            label Return Date
+                                            input.form-control(
+                                                type="date"
+                                                name="expected_return_date"
+                                                id="expected_return_date"
+                                            )
+
+                                        .col-md-6.mb-3
+                                            label Status
+                                            select.form-select(
+                                                name="status"
+                                                id="status"
+                                            )
+                                                option(value="ISSUED") ISSUED
+                                                option(value="IN_STOCK") IN_STOCK
+                                                option(value="REPAIR") REPAIR
+                                                option(value="SCRAPPED") SCRAPPED
+
+                                        .col-md-6.mb-3
+                                            label Reason
+                                            input.form-control(
+                                                type="text"
+                                                name="reason"
+                                                id="reason"
+                                            )
+
                                 .modal-footer
 
                                     button.btn.btn-secondary(
@@ -120,6 +147,32 @@ block content
                                     button.btn.btn-success(
                                         type="submit"
                                     ) Issue Asset 
+
+                // Delete Issue Modal
+                #deleteIssueModal.modal.fade(tabindex="-1" aria-labelledby="deleteIssueModalLabel" aria-hidden="true")
+                    .modal-dialog
+                        .modal-content
+                            form#deleteIssueForm(method="GET")
+                                .modal-header.bg-danger.text-white
+                                    h5#deleteIssueModalLabel.modal-title Delete Issue
+                                    button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+
+                                .modal-body
+                                    input#delete_issue_id(type="hidden" name="issue_id")
+
+                                    p.mb-0
+                                        | Are you sure you want to delete issue
+                                        strong#delete_issue_name.ms-1
+                                        | ?
+
+                                .modal-footer
+                                    button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+                                        i.bi.bi-x-circle.me-1
+                                        | Cancel
+
+                                    button.btn.btn-danger(type="submit")
+                                        i.bi.bi-trash.me-1
+                                        | Delete
                 // Return Modal
                 #returnModal.modal.fade(tabindex="-1")
                     .modal-dialog

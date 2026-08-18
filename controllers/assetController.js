@@ -1,4 +1,6 @@
 const { Asset, Category } = require("../models");
+const assetService = require("../services/assetService");
+
 // Display all employees
 exports.listAssets= async (req, res) => {
     try {
@@ -32,6 +34,27 @@ exports.getAsset = async (req, res) => {
 
     }
 
+};
+
+exports.checkSerial = async (req, res) => {
+    try {
+        const exists = await assetService.assetExists(req.query.serial_number);
+        res.json({ success: true, exists });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+exports.findBySerial = async (req, res) => {
+    try {
+        const asset = await assetService.findBySerial(req.query.serial_number);
+        if (!asset) return res.status(404).json({ success: false, error: "Asset not found." });
+        res.json({ success: true, data: asset });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 };
 
 // Show Add Employee page

@@ -1,55 +1,320 @@
 doctype html
 
-html
+html(lang="en")
     head
         title Asset Management
 
         meta(charset="UTF-8")
         meta(name="viewport" content="width=device-width, initial-scale=1")
 
-        link(
-            rel="stylesheet"
-            href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css"
-        )
+        // Bootstrap
         link(
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
         )
 
+        // Bootstrap Icons
+        link(
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        )
+
+        // DataTables
+        link(
+            rel="stylesheet"
+            href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css"
+        )
+
+        // Responsive DataTables
+        link(
+            rel="stylesheet"
+            href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.min.css"
+        )
+
+        style.
+
+            body{
+                background:#f8f9fa;
+                overflow-x:hidden;
+            }
+
+            .navbar-brand{
+                font-weight:bold;
+            }
+
+            table{
+                width:100% !important;
+            }
+
+            .dataTables_wrapper{
+                overflow-x:auto;
+            }
+
+            .card{
+                margin-bottom:15px;
+            }
+
+            .btn{
+                margin-bottom:5px;
+            }
+
+            #micBtn{
+
+                position:fixed;
+
+                bottom:20px;
+
+                right:20px;
+
+                width:70px;
+
+                height:70px;
+
+                border-radius:50%;
+
+                font-size:30px;
+
+                z-index:9999;
+
+                box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+                transition:.25s;
+
+            }
+
+            #micBtn:hover{
+
+                transform:scale(1.05);
+
+            }
+
+            #micBtn.recording{
+
+                background:#dc3545!important;
+
+                border-color:#dc3545;
+
+                color:white;
+
+                animation:pulse 1s infinite;
+
+            }
+
+            #micBtn.processing{
+
+                background:#ffc107!important;
+
+                border-color:#ffc107;
+
+                color:black;
+
+            }
+
+            @keyframes pulse{
+
+                0%{
+                    transform:scale(1);
+                }
+
+                50%{
+                    transform:scale(1.15);
+                }
+
+                100%{
+                    transform:scale(1);
+                }
+
+            }
+
+            #aiStatus{
+
+                position:fixed;
+
+                bottom:100px;
+
+                right:20px;
+
+                width:340px;
+
+                display:none;
+
+                z-index:9999;
+
+                border-radius:12px;
+
+            }
+            @media(max-width:768px){
+
+                .container-fluid{
+
+                    padding-left:10px;
+
+                    padding-right:10px;
+
+                }
+
+                #micBtn{
+
+                    width:55px;
+
+                    height:55px;
+
+                    font-size:22px;
+
+                    right:15px;
+
+                    bottom:15px;
+
+                }
+
+                #aiStatus{
+
+                    width:90vw;
+
+                    right:5vw;
+
+                    bottom:80px;
+
+                }
+
+            }
+
     body
 
-        nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+        // Navigation
+        nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.shadow-sm
+
             .container-fluid
 
-                a.navbar-brand(href="/") Asset Management
+                a.navbar-brand(href="/")
+                    i.bi.bi-box-seam-fill.me-2
+                    | Asset Management
 
-                ul.navbar-nav.ms-auto
+                button.navbar-toggler(
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                )
+                    span.navbar-toggler-icon
 
-                    li.nav-item
-                        a.nav-link(href="/") Dashboard
-                    li.nav-item
-                        a.nav-link(href="/employee/list") Employees
-                    li.nav-item
-                        a.nav-link(href="/category/list") Categories
-                    li.nav-item
-                        a.nav-link(href="/asset/list") Assets
-                    //- li.nav-item
-                        //- a.nav-link(href="/issue/issue") Issue Asset
-                    //- li.nav-item
-                        //- a.nav-link(href="/issue/return") Return Asset
-                    li.nav-item
-                        a.nav-link(href="/issue/history") Issues
-                    li.nav-item 
-                        a.nav-link(href="/scrape/list") Scraped Assets
+                .collapse.navbar-collapse#navbarNav
 
-        .container-fluid.px-4.mt-4
+                    ul.navbar-nav.ms-auto
+
+                        li.nav-item
+                            a.nav-link(href="/")
+                                i.bi.bi-speedometer2.me-1
+                                | Dashboard
+
+                        li.nav-item
+                            a.nav-link(href="/employee/list")
+                                i.bi.bi-people.me-1
+                                | Employees
+
+                        li.nav-item
+                            a.nav-link(href="/category/list")
+                                i.bi.bi-tags.me-1
+                                | Categories
+
+                        li.nav-item
+                            a.nav-link(href="/asset/list")
+                                i.bi.bi-laptop.me-1
+                                | Assets
+
+                        li.nav-item
+                            a.nav-link(href="/issue/history")
+                                i.bi.bi-arrow-left-right.me-1
+                                | Issues
+
+                        li.nav-item
+                            a.nav-link(href="/scrape/list")
+                                i.bi.bi-trash.me-1
+                                | Scraped Assets
+
+        // Page Content
+        .container-fluid.p-2.p-md-4.mt-3
+
             block content
 
+        // Existing Category Modal, available to the global voice assistant on every page
+        #categoryModal.modal.fade(tabindex='-1')
+            .modal-dialog.modal-lg
+                .modal-content
+
+                    .modal-header
+                        h5.modal-title#categoryModalTitle Add Category
+                        button.btn-close(
+                            type="button"
+                            data-bs-dismiss="modal"
+                        )
+
+                    form#categoryForm(
+                        action='/category/add'
+                        method="POST"
+                    )
+                        .modal-body
+                            input(
+                                type="hidden"
+                                name="category_id"
+                                id="category_id"
+                            )
+
+                            .row
+                                .col-md-6.mb-3
+                                    label Category Name
+                                    input.form-control(
+                                        type="text"
+                                        name="category_name"
+                                        id="category_name"
+                                        required
+                                    )
+
+                        .modal-footer
+                            button.btn.btn-secondary(
+                                type="button"
+                                data-bs-dismiss="modal"
+                            ) Cancel
+
+                            button.btn.btn-success(
+                                type="submit"
+                            ) Save
+
+        // AI Status Popup
+        .alert.alert-info.shadow#aiStatus(role="alert")
+            strong#aiStatusTitle AI Assistant
+            br
+            span#aiStatusText Ready
+
+        div#recordingTimer.badge.bg-danger(
+            style="display:none;position:fixed;bottom:170px;right:20px;z-index:9999;font-size:14px;padding:8px 12px;"
+        )
+            span#timerText 00:00
+
+        // Floating AI Microphone
+        button.btn.btn-primary#micBtn(
+            type="button"
+            title="AI Voice Assistant"
+        )
+            i.bi.bi-mic-fill#micIcon
+
+        // Bootstrap
         script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
-        //- script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+
+        // JQuery
         script(src="https://code.jquery.com/jquery-3.7.1.min.js")
+
+        // DataTables
         script(src="https://cdn.datatables.net/2.3.2/js/dataTables.js")
         script(src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js")
+
+        // Responsive DataTables
+        script(src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js")
+        script(src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js")
+
+        // Project Scripts
         script(src="/js/datatable.js")
         script(src="/js/asset.js")
         script(src="/js/category.js")
@@ -57,3 +322,15 @@ html
         script(src="/js/issue.js")
         script(src="/js/scrape.js")
         script(src="/js/dateValidation.js")
+
+        // AI Voice Assistant
+        <script src="/js/voice/helpers.js"></script>
+        <script src="/js/voice/categoryVoice.js"></script>
+        <script src="/js/voice/employeeVoice.js"></script>
+        <script src="/js/voice/assetVoice.js"></script>
+        <script src="/js/voice/issueVoice.js"></script>
+        <script src="/js/voice/returnVoice.js"></script>
+        <script src="/js/voice/scrapeVoice.js"></script>
+
+        <script src="/js/voice/handlers.js"></script>
+        <script src="/js/voice/voice.js"></script>

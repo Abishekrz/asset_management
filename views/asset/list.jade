@@ -83,7 +83,7 @@ block content
                         .modal-content
 
                             .modal-header
-                                h5.modal-title#modalTitle Add Asset
+                                h5#assetModalTitle.modal-title Add Asset
                                 button.btn-close(
                                     type="button"
                                     data-bs-dismiss="modal"
@@ -164,6 +164,17 @@ block content
                                                 option(value="NO") NO
 
                                         .col-md-6.mb-3
+                                            label Status
+                                            select.form-select(
+                                                name="status"
+                                                id="status"
+                                            )
+                                                option(value="IN_STOCK") IN_STOCK
+                                                option(value="ISSUED") ISSUED
+                                                option(value="REPAIR") REPAIR
+                                                option(value="SCRAPPED") SCRAPPED
+
+                                        .col-md-6.mb-3
                                             label Category
 
                                             select.form-select(
@@ -183,4 +194,30 @@ block content
                                     button.btn.btn-success(
                                         type="submit"
                                     ) Save 
+
+                // Delete Asset Modal
+                #deleteAssetModal.modal.fade(tabindex="-1" aria-labelledby="deleteAssetModalLabel" aria-hidden="true")
+                    .modal-dialog
+                        .modal-content
+                            form#deleteAssetForm(method="GET")
+                                .modal-header.bg-danger.text-white
+                                    h5#deleteAssetModalLabel.modal-title Delete Asset
+                                    button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+
+                                .modal-body
+                                    input#delete_asset_id(type="hidden" name="asset_id")
+
+                                    p.mb-0
+                                        | Are you sure you want to delete asset
+                                        strong#delete_asset_name.ms-1
+                                        | ?
+
+                                .modal-footer
+                                    button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+                                        i.bi.bi-x-circle.me-1
+                                        | Cancel
+
+                                    button.btn.btn-danger(type="submit")
+                                        i.bi.bi-trash.me-1
+                                        | Delete
                 

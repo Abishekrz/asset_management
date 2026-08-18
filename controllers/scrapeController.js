@@ -40,6 +40,28 @@ exports.getScrape = async (req, res) => {
         });
     }
 };
+
+exports.findScrape = async (req, res) => {
+    try {
+        const scrape = await Scrape.findOne({
+            where: { asset_id: req.query.asset_id },
+            include: [{ model: Asset }]
+        });
+        if (!scrape) {
+            return res.status(404).json({ success: false, error: "Scrape record not found." });
+        }
+        res.json({ success: true, scrape: {
+            scrape_id: scrape.scrape_id,
+            asset_id: scrape.asset_id,
+            scrape_date: scrape.scrape_date,
+            reason: scrape.reason,
+            asset_name: scrape.Asset?.asset_name
+        }});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
 exports.addScrape = async (req, res) => {
     try {
         await Scrape.create({

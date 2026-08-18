@@ -8,6 +8,7 @@ router.post("/issue", issueController.issueAsset);
 router.post("/return", issueController.returnAsset);
 router.post("/edit/:id", issueController.updateIssue);
 router.get("/delete/:id", issueController.deleteIssue);
+router.get("/find", issueController.findIssue);
 router.get("/:id", issueController.getIssue);
 
 

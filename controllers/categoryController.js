@@ -1,115 +1,115 @@
-const Category = require("../models/Category");
+const categoryService = require("../services/categoryService");
 
-// Display all category
-exports.listCategory= async (req, res) => {
-    try {
-        const categories = await Category.findAll();
-
-        res.render("category/list", {
-            categories
-        });
-        // console.log(categories)
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Error fetching Assets");
+exports.listCategory = async (req, res) => {
+    const result = await categoryService.list();
+    if (!result.success) {
+        return res.status(500).send(result.error);
     }
+    res.render("category/list", {
+        categories: result.data
+    });
 };
+
 exports.getCategory = async (req, res) => {
+    const result = await categoryService.get(
+        req.params.id
+    );
+    if (!result.success) {
+        return res.status(404).json(result);
+    }
+    res.json(result.data);
+};
 
-    try {
+exports.checkCategoryName = async (req, res) => {
+    const result = await categoryService.findDuplicate(
+        req.query.category_name
+    );
 
-        const category = await Category.findByPk(req.params.id);
-
-        res.json(category);
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.status(500).json({
-            success: false
-        });
-
+    if (!result.success) {
+        return res.status(400).json(result);
     }
 
+    res.json({
+        success: true,
+        exists: Boolean(result.data)
+    });
+};
+
+exports.findCategoryByName = async (req, res) => {
+    const result = await categoryService.findByName(
+        req.query.category_name
+    );
+
+    if (!result.success) {
+        return res.status(400).json(result);
+    }
+
+    if (result.data.length === 0) {
+        return res.status(404).json({
+            success: false,
+            error: "Category not found."
+        });
+    }
+
+    if (result.data.length > 1) {
+        return res.status(409).json({
+            success: false,
+            error: "Multiple categories have this name. Use a category ID."
+        });
+    }
+
+    res.json({
+        success: true,
+        data: result.data[0]
+    });
 };
 
 exports.editCategory = async (req, res) => {
-    try {
-
-        const category = await Category.findByPk(req.params.id);
-
-        if (!category) {
-            return res.status(404).json({
-                success: false,
-                message: "Category not found"
-            });
-        }
-
-        res.json(category);
-
-    } catch (err) {
-        console.log(err);
-
-        res.status(500).json({
+    const result = await categoryService.get(
+        req.params.id
+    );
+    if (!result.success) {
+        return res.status(404).json({
             success: false,
-            message: "Internal Server Error"
+            message: result.error
         });
     }
+    res.json(result.data);
 };
-
 exports.updateCategory = async (req, res) => {
-    try {
-
-        await Category.update(
-            {
-                category_name: req.body.category_name,
-            },
-            {
-                where: {
-                    category_id: req.params.id
-                }
-            }
-        );
-
-        res.redirect("/category/list");
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Error updating category");
+    const result = await categoryService.update(
+        req.params.id,
+        {
+            category_name: req.body.category_name,
+            description: req.body.description
+        }
+    );
+    if (!result.success) {
+        return res.status(400).send(result.error);
     }
+    res.redirect("/category/list");
 };
 
-// Show Add Category Page
 exports.showAddForm = (req, res) => {
     res.render("category/add");
 };
 
-// Add Category
 exports.addCategory = async (req, res) => {
-    try {
-        await Category.create({
-            category_name: req.body.category_name,
-            description: req.body.description
-        });
-        res.redirect("/category/list");
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Error adding category");
+    const result = await categoryService.create({
+        category_name: req.body.category_name,
+        description: req.body.description
+    });
+    if (!result.success) {
+        return res.status(400).send(result.error);
     }
+    res.redirect("/category/list");
 };
-
 exports.deleteCategory = async (req, res) => {
-    try {
-        await Category.destroy({
-            where: {
-                category_id: req.params.id
-            }
-        });
-        res.redirect("/category/list");
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Error deleting category");
+    const result = await categoryService.delete(
+        req.params.id
+    );
+    if (!result.success) {
+        return res.status(400).send(result.error);
     }
+    res.redirect("/category/list");
 };

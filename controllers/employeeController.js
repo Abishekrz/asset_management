@@ -1,12 +1,13 @@
-const Employee = require("../models/Employee");
+const employeeService = require("../services/employeeService");
 
 // Display all employees
 exports.listEmployees = async (req, res) => {
     try {
-        const employees = await Employee.findAll();
+        const result = await employeeService.list();
+        if (!result.success) throw new Error(result.error);
 
         res.render("employee/list", {
-            employees
+            employees: result.data
         });
 
     } catch (error) {
@@ -23,7 +24,7 @@ exports.showAddForm = (req, res) => {
 // Add Employee
 exports.addEmployee = async (req, res) => {
     try {
-        await Employee.create({
+        const result = await employeeService.create({
             employee_name: req.body.employee_name,
             email: req.body.email,
             department: req.body.department,
@@ -31,6 +32,7 @@ exports.addEmployee = async (req, res) => {
             status: req.body.status,
             joined_at: req.body.joined_at
         });
+        if (!result.success) return res.status(400).send(result.error);
         res.redirect("/employee/list");
     }
     catch(err){
@@ -41,7 +43,8 @@ exports.addEmployee = async (req, res) => {
 exports.changeStatus = async (req, res) => {
     try {
 
-        const employee = await Employee.findByPk(req.params.id);
+        const result = await employeeService.get(req.params.id);
+        const employee = result.data;
         if (!employee) {
             return res.status(404).send("Employee not found");
         }
@@ -49,14 +52,7 @@ exports.changeStatus = async (req, res) => {
             employee.status === "ACTIVE"
                 ? "INACTIVE"
                 : "ACTIVE";
-        await Employee.update(
-            { status: newStatus },
-            {
-                where: {
-                    employee_id: req.params.id
-                }
-            }
-        );
+        await employeeService.update(req.params.id, { ...employee.toJSON(), status: newStatus });
         res.redirect("/employee/list");
     } catch (err) {
         console.log(err);
@@ -66,7 +62,8 @@ exports.changeStatus = async (req, res) => {
 exports.editEmployee = async (req, res) => {
     try {
 
-        const employee = await Employee.findByPk(req.params.id);
+        const result = await employeeService.get(req.params.id);
+        const employee = result.data;
 
         if (!employee) {
             return res.status(404).send("Employee not found");
@@ -81,21 +78,15 @@ exports.editEmployee = async (req, res) => {
 exports.updateEmployee = async (req, res) => {
     try {
 
-        await Employee.update(
-            {
+        const result = await employeeService.update(req.params.id, {
                 employee_name: req.body.employee_name,
                 email: req.body.email,
                 department: req.body.department,
                 branch: req.body.branch,
                 status: req.body.status,
                 joined_at: req.body.joined_at
-            },
-            {
-                where: {
-                    employee_id: req.params.id
-                }
-            }
-        );
+            });
+        if (!result.success) return res.status(400).send(result.error);
 
         res.redirect("/employee/list");
 
@@ -103,4 +94,16 @@ exports.updateEmployee = async (req, res) => {
         console.log(err);
         res.status(500).send("Error updating employee");
     }
+};
+
+exports.checkEmail = async (req, res) => {
+    const employee = await employeeService.findByEmail(req.query.email);
+    res.json({ success: true, exists: Boolean(employee) });
+};
+
+exports.findByName = async (req, res) => {
+    const employees = await employeeService.findByName(req.query.employee_name);
+    if (employees.length === 0) return res.status(404).json({ success: false, error: "Employee not found." });
+    if (employees.length > 1) return res.status(409).json({ success: false, error: "Multiple employees have this name. Use an employee ID." });
+    res.json({ success: true, data: employees[0] });
 };

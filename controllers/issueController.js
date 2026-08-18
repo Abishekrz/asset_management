@@ -65,12 +65,43 @@ exports.getIssue = async (req, res) => {
             issue_date: issue.issue_date,
             return_date: issue.return_date,
             reason: issue.reason,
+            asset_name: issue.Asset?.asset_name,
+            asset_id: issue.asset_id,
+            employee_id: issue.employee_id,
+            status: issue.status || "ISSUED"
         });
     } catch (err) {
         console.log(err);
         res.status(500).json({
             success: false
         });
+    }
+};
+
+exports.findIssue = async (req, res) => {
+    try {
+        const issue = await Issue.findOne({
+            where: { asset_id: req.query.asset_id },
+            include: [Asset, Employee]
+        });
+        if (!issue) {
+            return res.status(404).json({ success: false, error: "Issue not found." });
+        }
+        res.json({ success: true, issue: {
+            issue_id: issue.issue_id,
+            employee_id: issue.employee_id,
+            asset_id: issue.asset_id,
+            issue_date: issue.issue_date,
+            expected_return_date: issue.expected_return_date,
+            return_date: issue.return_date,
+            reason: issue.reason,
+            asset_name: issue.Asset?.asset_name,
+            employee_name: issue.Employee?.employee_name,
+            status: issue.status || "ISSUED"
+        }});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 

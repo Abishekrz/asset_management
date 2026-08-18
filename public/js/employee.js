@@ -1,7 +1,7 @@
 function editEmployee(id) {
 
     $.get("/employee/" + id, function (employee) {
-        $("#modalTitle").text("Edit Employee");
+        $("#employeeModalTitle").text("Edit Employee");
         $("#employee_id").val(employee.employee_id);
         $("#employee_name").val(employee.employee_name);
         $("#email").val(employee.email);
@@ -19,7 +19,7 @@ function editEmployee(id) {
 }
     $("#employeeModal").on("show.bs.modal",function (e) {
         if($(e.relatedTarget).text().trim() ==="Add Employee"){
-            $("#modalTitle").text("Add Employee");
+            $("#employeeModalTitle").text("Add Employee");
             $("#employeeForm").trigger("reset");
             $("#employee_id").val("");
             $("#employeeForm").attr("action","/employee/add")

@@ -48,14 +48,13 @@ block content
         .modal-dialog.modal-lg 
             .modal-content
 
-                .modal-header   
-                    h5.modal.title#modalTitle Scrape Details
-                        button.btn-close(
-                            type="button"
-                            data-bs-dismiss="modal"
-                            data-bs-target='scrapeModal'
-
-                        )
+                .modal-header
+                    h5#scrapeModalTitle.modal-title Scrape Details
+                    button.btn-close(
+                        type="button"
+                        data-bs-dismiss="modal"
+                        data-bs-target='scrapeModal'
+                    )
                 form#scrapeForm(
                     action='/scrape/add'
                     method="POST"
@@ -103,6 +102,32 @@ block content
                         button.btn.btn-success(
                             type="submit"
                         ) Save 
+
+    // Delete Scrape Modal
+    #deleteScrapeModal.modal.fade(tabindex="-1" aria-labelledby="deleteScrapeModalLabel" aria-hidden="true")
+        .modal-dialog
+            .modal-content
+                form#deleteScrapeForm(method="GET")
+                    .modal-header.bg-danger.text-white
+                        h5#deleteScrapeModalLabel.modal-title Delete Scrape
+                        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+
+                    .modal-body
+                        input#delete_scrape_id(type="hidden" name="scrape_id")
+
+                        p.mb-0
+                            | Are you sure you want to delete scrape details for
+                            strong#delete_scrape_name.ms-1
+                            | ?
+
+                    .modal-footer
+                        button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+                            i.bi.bi-x-circle.me-1
+                            | Cancel
+
+                        button.btn.btn-danger(type="submit")
+                            i.bi.bi-trash.me-1
+                            | Delete
         // Edit Scrape Modal
     #editScrapeModal.modal.fade(tabindex="-1")
         .modal-dialog.modal-lg

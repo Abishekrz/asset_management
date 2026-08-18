@@ -38,6 +38,7 @@ block content
                 th Email
                 th Department
                 th Branch
+                th Joined_At
                 th Status
                 th Action
 
@@ -49,6 +50,7 @@ block content
                     td= employee.email
                     td= employee.department
                     td= employee.branch
+                    td= employee.joined_at
                     td= employee.status
 
                     td
@@ -68,7 +70,7 @@ block content
                     .modal-content
 
                         .modal-header
-                            h5.modal-title#modalTitle Add Employee
+                            h5#employeeModalTitle.modal-title Add Employee
                             button.btn-close(
                                 type="button"
                                 data-bs-dismiss="modal"
@@ -76,7 +78,7 @@ block content
 
                             )
 
-                        form#assetForm(
+                        form#employeeForm(
                             action="/employee/add"
                             method="POST"
                         )
@@ -123,7 +125,16 @@ block content
                                             name="branch"
                                             id="branch"
                                             required
-                                        )                                           
+                                        )
+                                    .col-md-6.mb-3
+                                        label Status
+                                        select.form-select(
+                                            name="status"
+                                            id="status"
+                                            required
+                                        )
+                                            option(value="ACTIVE") Active
+                                            option(value="INACTIVE") Inactive
                                     .col-md-6.mb-3
                                         label Joining Date
                                         input.form-control(
@@ -142,3 +153,28 @@ block content
                                 button.btn.btn-success(
                                     type="submit"
                                 ) Save  
+        // Delete Employee Modal
+        #deleteEmployeeModal.modal.fade(tabindex="-1" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true")
+            .modal-dialog
+                .modal-content
+                    form#deleteEmployeeForm(method="POST")
+                        .modal-header.bg-danger.text-white
+                            h5#deleteEmployeeModalLabel.modal-title Delete Employee
+                            button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+
+                        .modal-body
+                            input#delete_employee_id(type="hidden" name="employee_id")
+
+                            p.mb-0
+                                | Are you sure you want to delete employee
+                                strong#delete_employee_name.ms-1
+                                | ?
+
+                        .modal-footer
+                            button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+                                i.bi.bi-x-circle.me-1
+                                | Cancel
+
+                            button.btn.btn-danger(type="submit")
+                                i.bi.bi-trash.me-1
+                                | Delete
